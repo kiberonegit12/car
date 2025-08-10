@@ -1,0 +1,47 @@
+header{
+    background-color: rgb(127, 215, 127);
+    text-align: center;
+    padding: 30px;
+}
+
+nav a{
+    color: rgba(255, 255, 255, 0.972);
+    text-decoration: none;
+    font-size: 100px;
+    padding: 30px;
+}
+main h1{
+    text-align: center;
+}
+
+main img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width:270px;
+    border-radius:15px;
+}
+header nav a :hover{
+background: rgb(95, 95, 42)
+}
+
+{
+    background-color: black;
+    color :white;
+    padding: 20px 0;
+    margin: 20px 0
+    text-algin: center;
+}
+footer_content{
+    max-width: 900px;
+    
+}
+.footer_content a{
+    color: white;
+    text-decoration: none;
+    transition: color0.5s ease
+}
+.footer_content a:hover
+
+
+
