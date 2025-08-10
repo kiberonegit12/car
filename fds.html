@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoVision - Каталог автомобилей</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .car-card {
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        
+        .car-image {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .car-image:hover {
+            transform: scale(1.03);
+        }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-car text-3xl text-yellow-400"></i>
+                    <h1 class="text-3xl font-bold">AutoVision</h1>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="fds.html" class="hover:text-yellow-300 transition">Главная</a>
+                    <a href="#Catalog" class="hover:text-yellow-300 transition">Каталог</a>
+                    <a href="#footer" class="hover:text-yellow-300 transition">О нас</a>
+                    <a href="#footer" class="hover:text-yellow-300 transition">Вниз</a>
+                </div>
+                <button class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative h-96 flex items-center justify-center bg-gray-900 overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1494972308805-46337c870477?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                 alt="Luxury Cars" class="w-full h-full object-cover opacity-50">
+        </div>
+        <div class="relative z-10 text-center px-4">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">Найдите свою идеальную машину</h2>
+            <p class="text-xl text-gray-200 mb-8">Более 1000 моделей от ведущих мировых производителей</p>
+            <button class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-full transition transform hover:scale-105">
+                Начать поиск
+            </button>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="bg-white py-8 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="w-full md:w-auto">
+                    <label class="block text-gray-700 mb-2">Тип кузова</label>
+                    <select id="bodyType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                        <option value="all">Все типы</option>
+                        <option value="sedan">Седан</option>
+                        <option value="suv">Внедорожник</option>
+                        <option value="coupe">Купе</option>
+                        <option value="hatchback">Хэтчбек</option>
+                        <option value="convertible">Кабриолет</option>
+                    </select>
+                </div>
+                
+                <div class="w-full md:w-auto">
+                    <label class="block text-gray-700 mb-2">Цена</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="minPrice" placeholder="От" class="w-24 p-2 border border-gray-300 rounded-md">
+                        <span>-</span>
+                        <input type="number" id="maxPrice" placeholder="До" class="w-24 p-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-auto">
+                    <label class="block text-gray-700 mb-2">Год выпуска</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="minYear" placeholder="От" class="w-24 p-2 border border-gray-300 rounded-md">
+                        <span>-</span>
+                        <input type="number" id="maxYear" placeholder="До" class="w-24 p-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                
+                <button id="applyFilters" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition mt-6 md:mt-0">
+                    Применить
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Car Catalog -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4" id="Catalog">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Наш каталог</h2>
+            
+            <div id="carContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Cars will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Brands -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Популярные бренды</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <div class="brand-logo p-4 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Mercedes-Logo.svg" alt="Mercedes" class="h-12">
+                </div>
+                <div class="brand-logo p-4 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/BMW.svg" alt="BMW" class="h-12">
+                </div>
+                <div class="brand-logo p-4 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/9e/Audi_logo_2016.svg" alt="Audi" class="h-12">
+                </div>
+                <div class="brand-logo p-4 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Toyota_logo_2019.svg" alt="Toyota" class="h-12">
+                </div>
+                <div class="brand-logo p-4 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Honda_logo.svg" alt="Honda" class="h-12">
+                </div>
+                <div class="brand-logo p-4 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Volkswagen_logo_2019.svg" alt="Volkswagen" class="h-12">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Car Modal -->
+    <div id="carModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="relative">
+                <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+                    <div>
+                        <img id="modalCarImage" src="" alt="Car" class="w-full h-auto rounded-lg car-image">
+                        <div class="grid grid-cols-3 gap-2 mt-4">
+                            <img src="https://images.unsplash.com/photo-1494972308805-46337c870477?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                                 alt="Car" class="h-20 w-full object-cover rounded cursor-pointer hover:opacity-80">
+                            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                                 alt="Car" class="h-20 w-full object-cover rounded cursor-pointer hover:opacity-80">
+                            <img src="https://images.unsplash.com/photo-1542362567-b07e54358753?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                                 alt="Car" class="h-20 w-full object-cover rounded cursor-pointer hover:opacity-80">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 id="modalCarTitle" class="text-2xl font-bold text-gray-800 mb-2"></h3>
+                        <div class="flex items-center mb-4">
+                            <span id="modalCarPrice" class="text-2xl font-bold text-blue-600 mr-4"></span>
+                            <span id="modalCarYear" class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"></span>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-2">Характеристики</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-gas-pump text-gray-500 mr-2"></i>
+                                    <span id="modalCarFuel" class="text-gray-700"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-tachometer-alt text-gray-500 mr-2"></i>
+                                    <span id="modalCarMileage" class="text-gray-700"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-car text-gray-500 mr-2"></i>
+                                    <span id="modalCarBody" class="text-gray-700"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-cogs text-gray-500 mr-2"></i>
+                                    <span id="modalCarTransmission" class="text-gray-700"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-2">Описание</h4>
+                            <p id="modalCarDescription" class="text-gray-600"></p>
+                        </div>
+                        
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md w-full transition">
+                            <i class="fas fa-phone-alt mr-2"></i> Связаться с продавцом
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    
+    <footer class="bg-gray-900 text-white py-12 " id="footer">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-car text-yellow-400 mr-2"></i> AutoVision
+                    </h3>
+                    <p class="text-gray-400">Лучший выбор автомобилей на любой вкус и бюджет.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Каталог</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Новые автомобили</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Автомобили с пробегом</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Электромобили</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Премиум класс</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Коммерческий транспорт</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Помощь</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Как купить</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Как продать</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Отзывы</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Контакты</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Контакты</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>
+                            <span class="text-gray-400">г. Москва, ул. Автозаводская, 23</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt text-gray-400 mr-2"></i>
+                            <span class="text-gray-400">+7 (495) 123-45-67</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope text-gray-400 mr-2"></i>
+                            <span class="text-gray-400">info@autovision.ru</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2023 AutoVision. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample car data
+        const cars = [
+            {
+                id: 1,
+                brand: "BMW",
+                model: "M5-F90",
+                year: 2021,
+                price: 6500000,
+                bodyType: "sedan",
+                fuel: "Бензин",
+                mileage: "200 км",
+                transmission: "Автомат",
+                image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                description: "MW M5 F90 - это шестое поколение спортивного седана BMW M5, выпускавшееся с 2017 по 2020 год, а затем в обновленном варианте до 2024 года. Автомобиль оснащен двигателем V8 объемом 4,4 литра с двойным турбонаддувом, выдающим 600 лошадиных сил в стандартной версии и 625 в версии Competition, а также 635 л.с. в версии CS. M5 F90 имеет полный привод, 8-ступенчатую автоматическую коробку передач и разгон от 0 до 100 км/ч за 3,4 секунды."
+            },
+            {
+                id: 2,
+                brand: "BMW",
+                model: "X5",
+                year: 2022,
+                price: 7200000,
+                bodyType: "suv",
+                fuel: "Дизель",
+                mileage: "150 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\bzhg5fk7bm4l3trzyjnxfjzc4p1pm2x3.webp",
+                description: "BMW X5 2022 года с полным приводом xDrive. Комплектация M Sport, кожаный салон Merino, система ночного видения, проекционный дисплей, 4-зонный климат-контроль, пакет Driving Assistant Professional."
+            },
+            {
+                id: 3,
+                brand: "Nissan",
+                model: "GTR",
+                year: 2020,
+                price: 3800000,
+                bodyType: "hatchback",
+                fuel: "Бензин",
+                mileage: "230 км",
+                transmission: "Автомат",
+                image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                description: "Nissan GTR Sportback 2020 года в отличном техническом состоянии. Полный привод quattro, спортивная подвеска, виртуальная приборная панель, матричные LED-фары, бесключевой доступ."
+            },
+            {
+                id: 4,
+                brand: "Porsche",
+                model: "911 Carrera",
+                year: 2019,
+                price: 8500000,
+                bodyType: "coupe",
+                fuel: "Бензин",
+                mileage: "210 км",
+                transmission: "Автомат",
+                image: "https://images.unsplash.com/photo-1588258219511-64eb629cb833?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+                description: "Porsche 911 Carrera 2019 года в идеальном состоянии. Спортивный пакет Chrono, кожаный салон с подогревом и вентиляцией сидений, спортивная выхлопная система, 20-дюймовые легкосплавные диски."
+            },
+            {
+                id: 5,
+                brand: "Land Rover",
+                model: "Range Rover Sport",
+                year: 2022,
+                price: 7800000,
+                bodyType: "suv",
+                fuel: "Дизель",
+                mileage: "180 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\680.webp",
+                description: "Range Rover Sport 2022 года с полным комплектом опций. Пневмоподвеска, кожаный салон Windsor, система Terrain Response 2, проекционный дисплей, 4-зонный климат-контроль, пакет Driver Assist."
+            },
+            {
+                id: 6,
+                brand: "Tesla",
+                model: "Model S",
+                year: 2023,
+                price: 9500000,
+                bodyType: "sedan",
+                fuel: "Электричество",
+                mileage: "225 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\Tesla-Model-S-Plaid.jpg",
+                description: "Tesla Model S Plaid 2023 года с запасом хода 600 км. Разгон до 100 км/ч за 2.1 секунды, 21-дюймовые диски Arachnid, белый веганский салон, полный автопилот, премиум аудиосистема."
+            },
+            {
+                id: 7,
+                brand: "Toyota",
+                model: "Camry",
+                year: 2021,
+                price: 2500000,
+                bodyType: "sedan",
+                fuel: "Гибрид",
+                mileage: "150 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\cattouch (2).webp",
+                description: "Toyota Camry Hybrid 2021 года в отличном состоянии. Расход топлива 4.5 л/100 км, кожаный салон, подогрев передних сидений, камера заднего вида, система безопасности Toyota Safety Sense."
+            },
+            {
+                id: 8,
+                brand: "Volkswagen",
+                model: "Golf GTI",
+                year: 2020,
+                price: 2200000,
+                bodyType: "hatchback",
+                fuel: "Бензин",
+                mileage: "210км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\7909 (1).jpg",
+                description: "Volkswagen Golf GTI 2020 года с 2.0 TSI двигателем (245 л.с.). Спортивная подвеска, кожаный руль с подогревом, цифровая приборная панель, светодиодная оптика, система круиз-контроля."
+            },
+            {
+                id: 9,
+                brand: "Ford",
+                model: "Mustang",
+                year: 2018,
+                price: 3200000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "200 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\76587 (1).jpg",
+                description: "Ford Mustang Convertible 2018 года с 5.0 V8 двигателем (450 л.с.). Полностью электрический верх, кожаный салон с подогревом и вентиляцией сидений, спортивная выхлопная система, 19-дюймовые диски."
+            },
+            {
+                id: 10,
+                brand: "Lexus",
+                model: "isf",
+                year: 2013,
+                price: 31000000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "157 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\baed6vyq1agnrrdzn4d8fxje9 (1).jpg",
+                description: "Ford Mustang Convertible 2018 года с 5.0 V8 двигателем (450 л.с.). Полностью электрический верх, кожаный салон с подогревом и вентиляцией сидений, спортивная выхлопная система, 19-дюймовые диски."
+             },
+              {
+                id: 11,
+                brand: "Lamborgini",
+                model: "urus",
+                year: 2017,
+                price: 52000000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "200 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\6048dbfe989c6.jpg",
+                description: "Внедорожник 5 дв. E-класса, полный привод. Автомат. Бензиновый двигатель мощностью 650 лошадиных сил."
+            },
+                {
+                id: 12,
+                brand: "mclaren",
+                model: "720s",
+                year: 2022,
+                price: 20900000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "250 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\9be7d37b39e42fb30d575307b35319b859f480ab.jpg",
+                description: "McLaren 720S расположен в линейке Super Series, и новее своего преемника на 91 %. Оснащен доработанным 4,0 литровым двигателем V8 с двумя турбокомпрессорами, суммарно выдает 720 л. с. и 770 Н/м.[2] Автомобиль также оборудован семиступенчатой роботизированной коробкой переменных передач и задним приводом. Силовой агрегат является доработанной версией мотора предшественника. Производитель увеличил объем камер сгорания и добавил максимальную мощность во всем диапазоне оборотов.[3] Автомобиль имеет два багажных отделения, передний (150 литров) и задний (210 литров). А расход топлива составляет 7,9 / 15,8 литров (зависит от езды).[3] Выбросы CO2 составляют 319 грамм на километр."
+            },
+            {
+                id: 13,
+                brand: "rolls royce",
+                model: "phantom",
+                year: 2021,
+                price: 72400000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "150 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\picture.jpg",
+                description: "ем, кто своим присутствием вдохновляет на великие дела. Тем, чей голос имеет вес, но кто не требует внимания к себе. Тем, кто обладает феноменальной силой, не выставляя ее напоказ. Тем немногим, кто выбрал путь величия, подходит лишь чистейшее выражение духа Rolls-Royce. Phantom. Этот знаковый Rolls-Royce получил новый облик, соответствующий духу эпохи. Это его восьмое поколение, но неизменно первое в своем классе. Phantom вне времени. Начинаем отсчет новой эры. Phantom — единственный в своем роде. Единственный — Ваш."
+            },
+            {
+                id: 14,
+                brand: "Buggati",
+                model: "marvel",
+                year: 2024,
+                price: 1120000000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "380 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\756269709348069 (1).jpg",
+                description: "Автомобиль вдохновлён Bugatti Type 57SC Atlantic, концепция дизайна взята у Bugatti Vision Gran Turismo, основное назначение машины — высокие результаты на гоночной трассе. Выхлопная система машины была изменена, есть четверные выхлопные трубы. Ширина заднего фиксированного антикрыла — 1,8 метра, это на 23 % шире, чем аналогичный показатель антикрыла на Veyron (у которого оно выдвижное). Прежде чем набегающий воздух попадёт в двигатель и на антикрыло, он разделяется NACA воздуховодом для улучшения прижимной силы. Кроме того, для лучшей аэродинамики и охлаждения тормозов, установлены большой передний сплиттер и боковые юбки.[2]В качестве силовой установки на автомобиле используется оснащённый четырьмя турбонагнетателями двигатель W16 мощностью 1479 л.с. В паре с ним работает семиступенчатая роботизированная КПП с двойным сцеплением. Всё это позволяет добиться ускорения 0–100 км/ч за 2,4 сек. Максимальная скорость автомобиля ограничена 380 км/ч[источник не указан 1412 дней].В Bugatti запланировали производство всего 40 автомобилей, их сборка производилась на основной фабрике компании. Все 40 машин были проданы по предзаказам существующим владельцам Bugatti."
+            },
+            {
+                id: 15,
+                brand: "Lamdorgini",
+                model: " Temerario",
+                year: 2025,   
+                price: 48990000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "343 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\2025_Lamborghini_Temerario.jpg",
+                description: "Бензиновый двигатель V8 развивает мощность 588 кВт (800 л. с.) при 9000—9750 об/мин и крутящий момент 730 Н⋅м при 4000—7000 об/мин с красной зоной при 10000 об/мин. Электродвигатель, расположенный посередине, развивает мощность 110 кВт (150 л. с.) при 3500 об/мин и крутящий момент 300 Н⋅м. На передней оси расположено два электродвигателя[5]. Суммарная мощность составляет 677 кВт (907 л. с.)"
+            },
+            {
+                id: 16,
+                brand: "McLaren",
+                model: "765LT",
+                year: 2020,               
+                price: 33000000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "380 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\1614113480_novitec-mclaren-765lt-price-e1612260251770 (1).jpg",
+                description: "McLaren 765LT - это спортивный автомобиль, который является более экстремальной версией модели 720S. Он отличается улучшенной аэродинамикой, сниженным весом и увеличенной мощностью двигателя. McLaren 765LT оснащен 4,0-литровым двигателем V8 с двойным турбонаддувом, который развивает 765 лошадиных сил и 800 Нм крутящего момента. Разгон до 100 км/ч занимает 2,8 секунды, а максимальная скорость составляет 330 км/ч. "
+            },
+            {
+                id: 17,
+                brand: "Ferrari",
+                model: "LaFerrari",
+                year: 2013,               
+                price: 618499968 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "350 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\hvn2wksdqqnsts2ds7s9s42tscne7xi7.jpg",
+                description: "Ferrari LaFerrari - это гибридный гиперкар, выпущенный ограниченным тиражом. Он оснащен 6,3-литровым двигателем V12 и электромотором, обеспечивающими суммарную мощность 963 л.с. Максимальная скорость превышает 350 км/ч, а разгон с 0 до 100 км/ч занимает менее 3 секунд. "
+            },
+            {
+                id: 18,
+                brand: "Tank",
+                model: "T-72",
+                year: 1974,
+                price: 52000000,
+                bodyType: "convertible",
+                fuel: "дизель",
+                mileage: "65 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\8.jpg",
+                description: "Т-72-советский основной боевой танк второго поколения, принятый на вооружение в 1973 году. Он стал одним из самых массовых танков в мире и экспортировался во многие страны. Т-72 отличается мощным вооружением, надежной броней и высокой проходимостью. "
+            },
+            {
+                id: 19,
+                brand: "КАМАЗ",
+                model: "5350 бортовой",
+                year: 2003,
+                price: 10800000 ,
+                bodyType: "convertible",
+                fuel: "дизель",
+                mileage: "100  км",
+                transmission: "ручной",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\kamaz-43118-6013-50-1.500x375.webp",
+                description: "КАМАЗ 5350 – это бортовой грузовой автомобиль с колесной формулой 6x6, предназначенный для перевозки грузов по дорогам общего пользования и в условиях бездорожья. Он обладает высокой проходимостью благодаря полному приводу и блокировкам межколесного и межосевого дифференциалов. "
+            },
+            {
+                id: 20,
+                brand: "грузовик",
+                model: "с реактивным двигателем",
+                year: 2020,    
+                price: 11299999,
+                bodyType: "convertible",
+                fuel: "ядерное топливо",
+                mileage: "999999999999999999999999 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\652494e41b94759d22f2270c76da04d902b7b0e6_00.jpg",
+                description: "Хз  что писать"
+            },
+            {
+                id: 21,
+                brand: "Mercedes-Benz",
+                model: "Maybach S-Класс",
+                year: 2021, 
+                price: 51980000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "250 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\q9rhcwqw4an2zepit5vc5s01n3zz1t9q.jpg",
+                description: "Mercedes-Maybach S-Класс - это представительский седан, сочетающий роскошь и передовые технологии. Он представляет собой удлиненную версию S-Класса, предлагая больше пространства для задних пассажиров. Оснащается мощными бензиновыми двигателями, включая V8 и V12, и доступен с полным или задним приводом. "
+            },
+            {
+                id: 22,
+                brand: "Chevrolet",
+                model: "Corvette",
+                year: 2013,    
+                price: 27000000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: " 340 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\Article_161332_860_575.jpg",
+                description: "Chevrolet Corvette — двухместный спортивный автомобиль, выпускаемый компанией Chevrolet (подразделение General Motors) с 1953 года. Это первый серийный американский спортивный автомобиль, созданный американским производителем. Corvette имеет богатую историю и множество поколений, каждое из которых отличается уникальным дизайном и техническими характеристиками. "
+            },
+            {
+                id: 23,
+                brand: "Koenigsegg",
+                model: "",
+                year: 2024,     
+                price: 20000000,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "520 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\Y12a5xz6cNjW0lGU-70.jpg",
+                description: "Ранее сообщалось, что к соглашению о продаже SAAB концерн GM и Koenigsegg пришли в конце лета. Тогда называлась предварительная сумма сделки — около 440 миллионов долларов, которые должен был предоставить Европейский инвестиционный банк. Кроме того, акционеры Koenigsegg пообещали вложить в SAAB около 900 миллионов долларов, которые должны были пойти на создание новых моделей и модернизацию производства. Партнером Koenigsegg в этой сделке называлась китайская компания Beijing Automotive Industry Corp. (BAIC group), которая намеревалась купить небольшой пакет акций шведской группы. Эти деньги должны были помочь Koenigsegg оформить сделку без привлечения сторонних кредитов."
+            },
+            {
+                id: 24,
+                brand: "Lamborghini",
+                model: "Sian",
+                year: 2023,    
+                price: 355000000 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "350 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\2020-lamborghini-sian-fkp-37.jpg",
+                description: "Lamborghini Sian - это первый серийный гибридный суперкар Lamborghini, выпущенный ограниченным тиражом. Он сочетает в себе 6,5-литровый двигатель V12 мощностью 785 л.с. и 48-вольтовый электродвигатель, выдающий 34 л.с., в сумме 819 л.с. Sian разгоняется до 100 км/ч за 2,8 секунды и имеет максимальную скорость 350 км/ч. "
+            },
+            {
+                id: 25,
+                brand: "Bugatti",
+                model: "Chiron Super Sport 300+ Prototype",
+                year:2019,    
+                price: 250000000 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "490 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\Bugatti-Chiron-Super-SPort-300-4aa.jpg",
+                description: "В 2019 году прототип Bugatti Chiron Super Sport 300+ установил мировой рекорд скорости, став первым серийным автомобилем, преодолевшим барьер в 300 миль в час (490,484 км/ч). Серийная версия этого гиперкара, получившая название Chiron Super Sport 300+, была анонсирована в сентябре 2019 года и выпущена ограниченным тиражом в 30 экземпляров, первые из которых были собраны в 2021 году.  "
+            },
+            {
+                id: 26,
+                brand: "Bugatti",
+                model: "La Voiture Noire",
+                year: 2019,    
+                price: 1400000000 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "410 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\1621314363.jpg",
+                description: "Bugatti La Voiture Noire - это единственный в своем роде гиперкар, созданный Bugatti, который является самым дорогим новым автомобилем в мире. Он был представлен в 2019 году как дань уважения культовому Bugatti Type 57 SC Atlantic, в частности, черному экземпляру, известному как La Voiture Noire "
+            },
+            {
+                id: 27,
+                brand: "Bugatti",
+                model: "Bolide",
+                year: 2023,    
+                price: 328524362 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "400 км",
+                transmission: "Автомат",
+                image: "C:\\Uers\\KIBERone06\\Documents\\Тимофей\\мои сайт\\Bugatti_Bolide_Milano.jpg",
+                description: "Bugatti Bolide - это экспериментальный гиперкар, разработанный компанией Bugatti на базе модели Chiron. Основные характеристики включают: 8,0-литровый двигатель W16 с четырьмя турбонагнетателями, выдающий 1600-1850 л.с. в зависимости от топлива. Автомобиль отличается облегченным кузовом из углепластика и оптимизированной аэродинамикой для трекового использования. В 2024 году Bugatti анонсировала выпуск 40 экземпляров Bolide по цене 4 миллиона евро за каждый. "
+            },  
+            {
+                id: 28,
+                brand: "MAN",
+                model: "TGS",
+                year: 2014,    
+                price: 3200000 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "105 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\img_0864-600x400.jpg",
+                description: "семейство крупнотоннажных грузовиков бескапотной компоновки с двух-, трех- или четырехосным строением шасси и полной массой от 18 до 90 тонн, которые предназначены для выполнения широчайшего спектра работ (за счет большого выбора модификаций) и разработаны с учетом специфических требований для эксплуатации в городской черте на короткие расстояния (хотя востребованы также в условиях региональных/международных грузоперевозок"
+            }, 
+            {
+                id: 29,
+                brand: "MAN",
+                model: "TGS",
+                year: 2014,    
+                price: 3200000 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "105 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\img_0864-600x400.jpg",
+                description: "семейство крупнотоннажных грузовиков бескапотной компоновки с двух-, трех- или четырехосным строением шасси и полной массой от 18 до 90 тонн, которые предназначены для выполнения широчайшего спектра работ (за счет большого выбора модификаций) и разработаны с учетом специфических требований для эксплуатации в городской черте на короткие расстояния (хотя востребованы также в условиях региональных/международных грузоперевозок"
+            },  
+            {
+                id: 30,
+                brand: "Ford",
+                model: "gt",
+                year: 2015,    
+                price: 3200000 ,
+                bodyType: "convertible",
+                fuel: "Бензин",
+                mileage: "239 км",
+                transmission: "Автомат",
+                image: "C:\\Users\\KIBERone06\\Documents\\Тимофей\\мои сайт\\img_0864-600x400.jpg",
+                description: "семейство крупнотоннажных грузовиков бескапотной компоновки с двух-, трех- или четырехосным строением шасси и полной массой от 18 до 90 тонн, которые предназначены для выполнения широчайшего спектра работ (за счет большого выбора модификаций) и разработаны с учетом специфических требований для эксплуатации в городской черте на короткие расстояния (хотя востребованы также в условиях региональных/международных грузоперевозок"
+            },   
+        ];
+
+        // DOM elements
+        const carContainer = document.getElementById('carContainer');
+        const bodyTypeFilter = document.getElementById('bodyType');
+        const minPriceFilter = document.getElementById('minPrice');
+        const maxPriceFilter = document.getElementById('maxPrice');
+        const minYearFilter = document.getElementById('minYear');
+        const maxYearFilter = document.getElementById('maxYear');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const carModal = document.getElementById('carModal');
+        const closeModalBtn = document.getElementById('closeModal');
+
+        // Display cars
+        function displayCars(carsToDisplay) {
+            carContainer.innerHTML = '';
+            
+            carsToDisplay.forEach((car, index) => {
+                const carCard = document.createElement('div');
+                carCard.className = `car-card bg-white rounded-lg overflow-hidden shadow-md delay-${(index % 5) * 100}`;
+                carCard.innerHTML = `
+                    <img src="${car.image}" alt="${car.brand} ${car.model}" class="w-full h-48 object-cover car-image">
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">${car.brand} ${car.model}</h3>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${car.year}</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-600"><i class="fas fa-gas-pump mr-1"></i> ${car.fuel}</span>
+                            <span class="text-gray-600"><i class="fas fa-tachometer-alt mr-1"></i> ${car.mileage}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-blue-600">${car.price.toLocaleString()} ₽</span>
+                            <button onclick="showCarDetails(${car.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition">
+                                Подробнее
+                            </button>
+                        </div>
+                    </div>
+                `;
+                carContainer.appendChild(carCard);
+            });
+        }
+
+        // Filter cars
+        function filterCars() {
+            const bodyType = bodyTypeFilter.value;
+            const minPrice = parseInt(minPriceFilter.value) || 0;
+            const maxPrice = parseInt(maxPriceFilter.value) || Infinity;
+            const minYear = parseInt(minYearFilter.value) || 0;
+            const maxYear = parseInt(maxYearFilter.value) || Infinity;
+            
+            const filteredCars = cars.filter(car => {
+                return (bodyType === 'all' || car.bodyType === bodyType) &&
+                       car.price >= minPrice && 
+                       car.price <= maxPrice &&
+                       car.year >= minYear && 
+                       car.year <= maxYear;
+            });
+            
+            displayCars(filteredCars);
+        }
+
+        // Show car details in modal
+        function showCarDetails(carId) {
+            const car = cars.find(c => c.id === carId);
+            if (!car) return;
+            
+            document.getElementById('modalCarTitle').textContent = `${car.brand} ${car.model}`;
+            document.getElementById('modalCarPrice').textContent = `${car.price.toLocaleString()} ₽`;
+            document.getElementById('modalCarYear').textContent = car.year;
+            document.getElementById('modalCarFuel').textContent = car.fuel;
+            document.getElementById('modalCarMileage').textContent = car.mileage;
+            
+            // Translate body type
+            let bodyTypeText = '';
+            switch(car.bodyType) {
+                case 'sedan': bodyTypeText = 'Седан'; break;
+                case 'suv': bodyTypeText = 'Внедорожник'; break;
+                case 'coupe': bodyTypeText = 'Купе'; break;
+                case 'hatchback': bodyTypeText = 'Хэтчбек'; break;
+                case 'convertible': bodyTypeText = 'Кабриолет'; break;
+                default: bodyTypeText = car.bodyType;
+            }
+            
+            document.getElementById('modalCarBody').textContent = bodyTypeText;
+            document.getElementById('modalCarTransmission').textContent = car.transmission;
+            document.getElementById('modalCarDescription').textContent = car.description;
+            document.getElementById('modalCarImage').src = car.image;
+            
+            carModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal() {
+            carModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Event listeners
+        applyFiltersBtn.addEventListener('click', filterCars);
+        closeModalBtn.addEventListener('click', closeModal);
+        carModal.addEventListener('click', (e) => {
+            if (e.target === carModal) closeModal();
+        });
+
+        // Initialize
+        displayCars(cars);
+    </script>
+</body>
+</html>
